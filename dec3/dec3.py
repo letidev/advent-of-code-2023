@@ -8,9 +8,23 @@ with open("test.txt") as f:
 
 sum = 0
 
+gears_numbers = []
 
-def is_adjacent_symbol(str, i, j):
-    if (str[i][j] < '0' or str[i][j] > '9') and str[i][j] != '.':
+
+def add_number_to_gears_list(i, j, number):
+    tuple = (i, j, number)
+    gears_numbers.append(tuple)
+
+    x = [item for item in gears_numbers if item[0] == i and item[1] == j]
+
+    if (len(x) == 2):
+        global sum
+        sum += int(x[0][2]) * int(x[1][2])
+
+
+def is_next_to_gear(str, i, j, number):
+    if str[i][j] == "*":
+        add_number_to_gears_list(i, j, number)
         return True
 
     return False
@@ -28,46 +42,43 @@ for i in range(len(lines)):
 
         for j in range(num_start_pos, num_start_pos + len(number), 1):
             if i > 0:  # top row
-                if is_adjacent_symbol(lines, i-1, j):  # above
+                if is_next_to_gear(lines, i-1, j, number):  # above
                     flag = True
                     break
 
                 if j < len(lines[i-1]) - 1:  # top right diagonal
-                    if is_adjacent_symbol(lines, i-1, j+1):
+                    if is_next_to_gear(lines, i-1, j+1, number):
                         flag = True
                         break
 
                 if j > 0:  # top left diagonal
-                    if is_adjacent_symbol(lines, i-1, j-1):
+                    if is_next_to_gear(lines, i-1, j-1, number):
                         flag = True
                         break
 
             if j < (len(lines[i]) - 1):  # same line right
-                if is_adjacent_symbol(lines, i, j+1):
+                if is_next_to_gear(lines, i, j+1, number):
                     flag = True
                     break
 
             if j > 0:  # same line left
-                if is_adjacent_symbol(lines, i, j-1):
+                if is_next_to_gear(lines, i, j-1, number):
                     flag = True
                     break
 
             if i < len(lines) - 1:  # bottom row
-                if is_adjacent_symbol(lines, i + 1, j):
+                if is_next_to_gear(lines, i + 1, j, number):
                     flag = True
                     break
 
                 if j < len(lines[i+1]) - 1:  # bottom right diagonal
-                    if is_adjacent_symbol(lines, i+1, j+1):
+                    if is_next_to_gear(lines, i+1, j+1, number):
                         flag = True
                         break
 
                 if j > 0:  # bottom left diagonal
-                    if is_adjacent_symbol(lines, i+1, j-1):
+                    if is_next_to_gear(lines, i+1, j-1, number):
                         flag = True
                         break
-
-        if flag:
-            sum += int(number)
 
 print(sum)
