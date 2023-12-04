@@ -6,12 +6,8 @@ with open("test.txt") as f:
 
 sum = 0
 
-for line in lines:
-    all_numbers = line.split(": ")[1].split(" | ")
 
-    winning_numbers = sorted(int(num) for num in all_numbers[0].split())
-    my_numbers = sorted(int(num) for num in all_numbers[1].split())
-
+def get_num_matches_for_game(winning_numbers: list, my_numbers: list) -> int:
     reached_win_end = False
     reached_my_end = False
     matched = 0
@@ -58,7 +54,23 @@ for line in lines:
             else:
                 reached_my_end = True
 
+    return matched
+
+
+num_cards = [1 for _ in range(len(lines))]
+
+for i in range(len(lines)):
+    all_numbers = lines[i].split(": ")[1].split(" | ")
+
+    winning_numbers = sorted(int(num) for num in all_numbers[0].split())
+    my_numbers = sorted(int(num) for num in all_numbers[1].split())
+
+    matched = get_num_matches_for_game(winning_numbers, my_numbers)
+
     if matched != 0:
-        sum += 2 ** (matched - 1)
+        for j in range(i + 1, i + 1 + matched):
+            num_cards[j] += num_cards[i]
+
+    sum += num_cards[i]
 
 print(sum)
