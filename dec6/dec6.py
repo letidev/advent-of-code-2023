@@ -4,33 +4,29 @@ lines = []
 with open("test.txt") as f:
     lines = f.read().splitlines()
 
-times = [int(x) for x in lines[0].split(":")[1].split()]
-distances = [int(x) for x in lines[1].split(":")[1].split()]
+time = int(''.join(lines[0].split(":")[1].split()))
+distance = int(''.join(lines[1].split(":")[1].split()))
 
-print(times)
-print(distances)
+print(time)
+print(distance)
 
-prod = 1
+left = 0
+right = math.ceil(time / 2)
+found = -1
 
-for i in range(len(times)):
-    left = 0
-    right = math.ceil(times[i] / 2)
-    found = -1
+while True:
+    mid = math.ceil((left + right) / 2)
+    dist = mid*time - mid**2
 
-    while True:
-        mid = math.ceil((left + right) / 2)
-        dist = mid*times[i] - mid**2
-
-        if dist <= distances[i]:
-            left = mid
+    if dist <= distance:
+        left = mid
+    else:
+        if mid - 1 >= left and (mid-1)*time - (mid-1)**2 <= distance:
+            found = mid
+            break
         else:
-            if mid - 1 >= left and (mid-1)*times[i] - (mid-1)**2 <= distances[i]:
-                found = mid
-                break
-            else:
-                right = mid
+            right = mid
 
-    margin = times[i] - 2 * found + 1
-    prod *= margin
+margin = time - 2 * found + 1
 
-print(prod)
+print(margin)
