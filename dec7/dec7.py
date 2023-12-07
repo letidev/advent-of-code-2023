@@ -5,6 +5,7 @@ with open("test.txt") as f:
     lines = f.read().splitlines()
 
 card_powers = {
+    "J": 1,
     "2": 2,
     "3": 3,
     "4": 4,
@@ -14,7 +15,6 @@ card_powers = {
     "8": 8,
     "9": 9,
     "T": 10,
-    "J": 11,
     "Q": 12,
     "K": 13,
     "A": 14
@@ -26,33 +26,65 @@ def calc_hand_type(hand: str):
 
     types_of_same = []
     count = 1
-    for i in range(len(sorted_hand) - 1):
-        if sorted_hand[i] == sorted_hand[i+1]:
+    jokers = 0
+    hand_sz = len(sorted_hand)
+
+    for i in range(hand_sz):
+        if (sorted_hand[i] == "J"):
+            jokers += 1
+
+        if i + 1 < hand_sz and sorted_hand[i] == sorted_hand[i+1] and sorted_hand[i] != "J":
             count += 1
         else:
             if count > 1:
                 types_of_same.append(count)
             count = 1
 
-    if count > 1:
-        types_of_same.append(count)
-
     types_of_same = sorted(types_of_same)
 
-    if types_of_same == [5]:
-        return 7
-    elif types_of_same == [4]:
-        return 6
-    elif types_of_same == [2, 3]:
-        return 5
-    elif types_of_same == [3]:
-        return 4
-    elif types_of_same == [2, 2]:
-        return 3
-    elif types_of_same == [2]:
-        return 2
-    else:
-        return 1
+    if types_of_same == [5]:  # type 7
+        return 7  # 22222
+    #
+    elif types_of_same == [4]:  # type 6
+        if jokers == 1:  # 2222J
+            return 7
+        return 6  # 22223
+    #
+    elif types_of_same == [2, 3]:  # type 5
+        return 5  # 22333
+    #
+    elif types_of_same == [3]:  # type 4
+        if jokers == 1:  # 222J3
+            return 6
+        elif jokers == 2:  # 222JJ
+            return 7
+        return 4  # 22234
+    #
+    elif types_of_same == [2, 2]:  # type 3
+        if jokers == 1:  # 2233J
+            return 5
+        return 3  # 22334
+    #
+    elif types_of_same == [2]:  # type 2
+        if jokers == 1:  # 22J34
+            return 4
+        elif jokers == 2:  # 22JJ3
+            return 6
+        elif jokers == 3:  # 22JJJ
+            return 7
+        return 2  # 22345
+    #
+    else:  # type 1
+        # print(hand, sorted_hand, jokers)
+        if jokers == 1:  # J2345
+            return 2
+        elif jokers == 2:  # JJ234
+            return 4
+        elif jokers == 3:  # JJJ23
+            return 6
+        elif jokers == 4 or jokers == 5:  # JJJJ2 or JJJJJ
+            return 7
+        return 1  # 23456
 
 
 class Hand:
@@ -84,15 +116,7 @@ for line in lines:
     hand = split[0]
     bid = split[1]
     hand_type = calc_hand_type(hand)
-
     hands.append(Hand(hand, bid, hand_type))
-
-for hand in hands:
-    print(hand)
-
-print()
-print("======")
-print()
 
 sorted_hands = sorted(hands, key=functools.cmp_to_key(cmp_fn))
 
