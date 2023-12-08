@@ -41,49 +41,35 @@ def calc_hand_type(hand: str):
             count = 1
 
     types_of_same = sorted(types_of_same)
+    types_of_same.reverse()
+
+    if types_of_same == []:
+        if jokers < 5:
+            types_of_same = [1 + jokers]
+        else:
+            types_of_same = [5]
+    else:
+        types_of_same[0] += jokers
 
     if types_of_same == [5]:  # type 7
         return 7  # 22222
     #
     elif types_of_same == [4]:  # type 6
-        if jokers == 1:  # 2222J
-            return 7
         return 6  # 22223
     #
-    elif types_of_same == [2, 3]:  # type 5
+    elif types_of_same == [3, 2]:  # type 5
         return 5  # 22333
     #
     elif types_of_same == [3]:  # type 4
-        if jokers == 1:  # 222J3
-            return 6
-        elif jokers == 2:  # 222JJ
-            return 7
         return 4  # 22234
     #
     elif types_of_same == [2, 2]:  # type 3
-        if jokers == 1:  # 2233J
-            return 5
         return 3  # 22334
     #
     elif types_of_same == [2]:  # type 2
-        if jokers == 1:  # 22J34
-            return 4
-        elif jokers == 2:  # 22JJ3
-            return 6
-        elif jokers == 3:  # 22JJJ
-            return 7
         return 2  # 22345
     #
     else:  # type 1
-        # print(hand, sorted_hand, jokers)
-        if jokers == 1:  # J2345
-            return 2
-        elif jokers == 2:  # JJ234
-            return 4
-        elif jokers == 3:  # JJJ23
-            return 6
-        elif jokers == 4 or jokers == 5:  # JJJJ2 or JJJJJ
-            return 7
         return 1  # 23456
 
 
