@@ -28,12 +28,12 @@ for line in lines:
         if zeroes == len(sequences[-1]):
             flag = True
 
-    last = 0
+    first = 0
 
     sequences.reverse()
 
     for seq in sequences:
-        num = seq[-1] + num
+        num = seq[0] - num
 
     print(num)
     sum += num
