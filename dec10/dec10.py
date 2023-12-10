@@ -3,7 +3,7 @@ import sys
 sys.setrecursionlimit(100000)
 
 lines = []
-with open("test.txt") as f:
+with open("example3.txt") as f:
     lines = f.read().splitlines()
 
 x = -1
@@ -31,7 +31,7 @@ line_len = len(lines[0])
 
 for i in range(len(lines)):
     dist.append([])
-    dist[-1] = [0 for _ in range(len(lines))]
+    dist[-1] = [0 for _ in range(len(lines[i]))]
 
     j = lines[i].find("S")
 
