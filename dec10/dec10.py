@@ -1,9 +1,10 @@
 import sys
+import re
 
 sys.setrecursionlimit(100000)
 
 lines = []
-with open("example3.txt") as f:
+with open("test.txt") as f:
     lines = f.read().splitlines()
 
 x = -1
@@ -84,19 +85,62 @@ def search(i, j, d, prev_dir):
     return
 
 
+# part 1
 search(x, y, 0, "")
 
-for line in lines:
-    print(line)
-
-print()
-
-for line in dist:
-    print(line)
+# split strings to lists of chars for easier work
+for i in range(len(lines)):
+    lines[i] = [x for x in lines[i]]
 
 mx = 0
-for line in dist:
+for i, line in enumerate(dist):
+    # answer for part 1
     mx = max(mx, max(line))
+    for j, _ in enumerate(line):
+        # replaced junk pipes with dots
+        if (dist[i][j] == 0 and lines[i][j] != "S"):
+            lines[i][j] = "."
+
 
 print()
 print(mx)
+
+# replace character with what S should be for part 2
+lines[x][y] = "-"
+inside = 0
+
+# part 2
+for i in range(len(lines)):
+    walls = 0
+    prev = ""
+
+    for j in range(len(lines[i])):
+        ch = lines[i][j]
+
+        # junk pipes have been replaced with "."
+        if (lines[i][j] == "."):
+            if (walls % 2 == 1):
+                inside += 1
+                continue
+            else:
+                continue
+
+        # horizontal is not wall, do nothing
+        if (ch == "-"):
+            continue
+
+        elif (ch == "|"):
+            walls += 1
+            prev = ""
+
+        elif (prev == ""):
+            prev = ch
+
+        else:
+            if (prev == "L" and ch == "7"):
+                walls += 1
+            elif (prev == "F" and ch == "J"):
+                walls += 1
+            prev = ""
+
+print(inside)
