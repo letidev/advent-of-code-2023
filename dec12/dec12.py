@@ -1,56 +1,57 @@
-import re
-import sys
-
-sys.setrecursionlimit(1000000)
+import time
 
 lines = []
 with open("test.txt") as f:
     lines = f.read().splitlines()
 
-
-def check_pattern(pattern, nums):
-    springs = re.findall(r'#+', ''.join(pattern))
-
-    if (len(springs) != len(nums)):
-        return False
-
-    for i in range(len(springs)):
-        if (len(springs[i]) != nums[i]):
-            return False
-
-    return True
+memo = {}
 
 
-def generate(pattern, nums, generated, idx):
-    if (idx == len(pattern)):
-        if check_pattern(generated, nums):
+def generate(pattern, nums):
+    # reached end
+    if pattern == "":
+        # if no numbers to cover - all good
+        if nums == ():
             return 1
-        else:
+        else:  # bad
             return 0
+
+    # no numbers left to cover
+    if nums == ():
+        # if there are still broken left - bad
+        if "#" in pattern:
+            return 0
+        else:  # good
+            return 1
+
     sum = 0
+    key = (pattern, nums)
 
-    if (pattern[idx] != "?"):
-        sum += generate(pattern, nums, generated, idx+1)
-    else:
-        generated[idx] = "."
-        sum += generate(pattern, nums, generated, idx+1)
-        generated[idx] = "?"
+    if key in memo:
+        return memo[key]
 
-        generated[idx] = "#"
-        sum += generate(pattern, nums, generated, idx+1)
-        generated[idx] = "?"
+    if pattern[0] in ".?":
+        sum += generate(pattern[1:], nums)
 
+    if pattern[0] in "#?":
+        if nums[0] <= len(pattern) and "." not in pattern[:nums[0]] and (nums[0] == len(pattern) or pattern[nums[0]] != "#"):
+            sum += generate(pattern[nums[0] + 1:], nums[1:])
+
+    memo[key] = sum
     return sum
 
 
 sum = 0
+
+start_time = time.time()
+
 for line in lines:
-    spl = line.split(' ')
+    pattern, nums = line.split()
+    nums = tuple(map(int, nums.split(",")))
 
-    pattern = [x for x in spl[0]]
-    nums = [int(x) for x in spl[1].split(',')]
+    pattern = "?".join([pattern] * 5)
+    nums *= 5
 
-    list = re.findall(r'#+', ''.join(pattern))
-    sum += generate(pattern, nums, pattern, 0)
-
+    sum += generate(pattern, nums)
+print("--- %s seconds --- " % (time.time() - start_time))
 print(sum)
